@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Clientes</h1>
+
+        <!-- Crear Cliente -->
+        <section>
+            <h2>Crear Cliente</h2>
+            <form id="create-form">
+                <div class="form-group">
+                    <label for="create-name">Nombre:</label>
+                    <input type="text" id="create-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="create-nit">NIT:</label>
+                    <input type="number" id="create-nit" name="nit" required>
+                </div>
+                <button type="submit" class="btn">Crear</button>
+            </form>
+        </section>
+
+        <!-- Obtener Cliente por NIT -->
+        <section>
+            <h2>Obtener Cliente por NIT</h2>
+            <form id="get-by-nit-form">
+                <div class="form-group">
+                    <label for="get-nit">NIT:</label>
+                    <input type="number" id="get-nit" name="nit" required>
+                </div>
+                <button type="submit" class="btn">Obtener</button>
+            </form>
+            <div id="get-by-nit-result" class="result"></div>
+        </section>
+
+        <!-- Obtener Todos los Clientes -->
+        <section>
+            <h2>Obtener Todos los Clientes</h2>
+            <button id="get-all-btn" class="btn">Obtener Todos</button>
+            <div id="get-all-result" class="result"></div>
+        </section>
+
+        <!-- Actualizar Cliente -->
+        <section>
+            <h2>Actualizar Cliente</h2>
+            <form id="update-form">
+                <div class="form-group">
+                    <label for="update-nit">NIT (Cliente a actualizar):</label>
+                    <input type="number" id="update-nit" name="nit" required>
+                </div>
+                <div class="form-group">
+                    <label for="update-name">Nuevo Nombre:</label>
+                    <input type="text" id="update-name" name="name">
+                </div>
+                <button type="submit" class="btn">Actualizar</button>
+            </form>
+        </section>
+
+        <!-- Eliminar Cliente -->
+        <section>
+            <h2>Eliminar Cliente</h2>
+            <form id="delete-form">
+                <div class="form-group">
+                    <label for="delete-nit">NIT:</label>
+                    <input type="number" id="delete-nit" name="nit" required>
+                </div>
+                <button type="submit" class="btn">Eliminar</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:5000/api/clients';
+
+        // Crear Cliente
+        document.getElementById('create-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('create-name').value;
+            const nit = document.getElementById('create-nit').value;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, nit })
+            });
+
+            alert(await response.text());
+        });
+
+        // Obtener Cliente por NIT
+        document.getElementById('get-by-nit-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const nit = document.getElementById('get-nit').value;
+
+            const response = await fetch(`${apiUrl}${nit}`, {
+                method: 'GET'
+            });
+
+            document.getElementById('get-by-nit-result').innerText = JSON.stringify(await response.json(), null, 2);
+        });
+
+        // Obtener Todos los Clientes
+        document.getElementById('get-all-btn').addEventListener('click', async () => {
+            const response = await fetch(apiUrl, { method: 'GET' });
+            document.getElementById('get-all-result').innerText = JSON.stringify(await response.json(), null, 2);
+        });
+
+        // Actualizar Cliente
+        document.getElementById('update-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const nit = document.getElementById('update-nit').value;
+            const name = document.getElementById('update-name').value;
+
+            const response = await fetch(`${apiUrl}${nit}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+
+            alert(await response.text());
+        });
+
+        // Eliminar Cliente
+        document.getElementById('delete-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const nit = document.getElementById('delete-nit').value;
+
+            const response = await fetch(`${apiUrl}${nit}`, { method: 'DELETE' });
+            alert(await response.text());
+        });
+    </script>
+</body>
+</html>
